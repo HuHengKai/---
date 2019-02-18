@@ -2,7 +2,7 @@ import os
 import requests
 from lxml import etree
 import pymysql
-#连接数据库,数据库操作
+#连接数据库,数据库操作,s数据库用的是mysql
 db=pymysql.Connect(host='localhost',port=3306,user='root',
                    passwd='123456',db='tushu', charset='utf8'
                    )
@@ -28,10 +28,10 @@ def get_html(url):
         html.encoding=html.apparent_encoding
         if html.status_code==200:
             print("获取源码成功")
-            #print(html.text)
     except Exception as f:
         print("获取失败")
     return html.text
+#处理获取到的网页
 def parser(html):
     html=etree.HTML(html)
     titles=html.xpath("//div[@class='address']/div[@class='houseInfo']/a/text()")
@@ -46,19 +46,10 @@ def parser(html):
                        format(titles[i],daxiao[i],price[i],age[i],images[i]))
         db.commit()
         print("正在存储%s:"%titles[i])
-        # cursor.commit()
-        # cursor.execute('''insert into rooms(`title`,`daxiao`,`price`,`image`,`age`) value("{}","{}","{}"."{}","{}") '''.
-        #                format(titles[i], daxiao[i], price[i], pymysql.escape_string(images[i]), age[i]))
-        # cursor.commit()
-
-
-
 if __name__=='__main__':
     for url in urls:
         html = get_html(url)
         parser(html)
-    # html=get_html(url)
-    # parser(html)
 
 
 
